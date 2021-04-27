@@ -1,34 +1,44 @@
 import requests
 import os
+import time
 import json
 import configparser
 
-PROPERTIES_PATH = "config.properties"
+from google.cloud import pubsub_v1
+from google.api_core.exceptions import AlreadyExists, InvalidArgument
+
 
 #
-# Specify the real values in config.properties file
+# Set the environment variable with your bearer_token
 #
-API_consumer_key = "THE CONSUMER KEY"
-API_consumer_secret = "THE CONSUMER SECRET"
-access_token_key = "THE ACCESS TOKEN KEY"
-access_token_secret = "THE ACCESS TOKEN SECRET"
-bearer_token = "THE BEARER TOKEN"
+bearer_token = os.environ.get("BEARER_TOKEN")
 
 #
-# Initial configuration to obtain the tweets stream access. Get the real values
-# from config.properties file.
+# Setting up GCP Variables
 #
-def config_app():
-    config = configparser.RawConfigParser()
-    config.read(PROPERTIES_PATH)
-    config_dict = dict(config.items("TWITER_APP"))
+project_id = "pnal28a21"
+topic_id = "twitter28a"
+topic_name = "projects/{project}/topics/{topic}".format(
+    project=project_id,
+    topic=topic_id,
+)
 
-    print(config_dict)
-    API_consumer_key = config_dict["api_consumer_key"]
-    API_consumer_secret = config_dict["api_consumer_secret"]
-    access_token_key = config_dict["access_token_key"]
-    access_token_secret = config_dict["access_token_secret"]
-    bearer_token = config_dict["bearer_token"]
+
+def init_GCP():
+    publisher_client = pubsub_v1.PublisherClient()
+    # Check if the topic exists. If dont, the topic is created
+    try:
+        topic = publisher_client.create_topic(request={"name": topic_name})
+    except AlreadyExists:
+        return publisher_client
+    except InvalidArgument:
+        print(
+            "Error: Please, check if the Project name '{project}' is correct and the topic name '{topic}' format is correct".format(
+                project=project_id,
+                topic=topic_id,
+            )
+        )
+        return None
 
 
 def get_header():
@@ -44,6 +54,8 @@ def set_rules():
     rules = [
         {"value": "#ParoNacional #28Abril", "tag": "Paro Nal 28 Abril"},
         {"value": "#ParoNacional28A #28Abril", "tag": "Paro Nal 28 Abril"},
+        {"value": "#ReformaTributaria", "tag": "Reforma tributaria"},
+        {"value": "#NoALaReforma", "tag": "Reforma tributaria"},
         {
             "value": "#ParoNacional 28 abril (vandalos OR vandalismo)",
             "tag": "Paro Nal 21 Abril vandalismo",
@@ -71,7 +83,9 @@ def set_rules():
         raise Exception(
             "Cannot add rules (HTTP {}): {}".format(response.status_code, response.text)
         )
+    print("### Rules setting result")
     print(json.dumps(response.json()))
+    print("###")
 
 
 #
@@ -104,20 +118,22 @@ def delete_rules():
                 response.status_code, response.text
             )
         )
+    print("### Rules deletion result")
     print(json.dumps(response.json()))
+    print("###")
 
 
 #
-# Tweets sreamming
+# Tweets sreaming
 #
-def get_tweets(set):
+def get_tweets(set, publisher_client):
     header = get_header()
     response = requests.get(
         "https://api.twitter.com/2/tweets/search/stream",
         headers=header,
         stream=True,
     )
-    print(response.status_code)
+
     if response.status_code != 200:
         raise Exception(
             "Cannot get stream (HTTP {}): {}".format(
@@ -127,11 +143,18 @@ def get_tweets(set):
     for response_line in response.iter_lines():
         if response_line:
             json_response = json.loads(response_line)
-            print(json.dumps(json_response, indent=4, sort_keys=True))
+            data = json.dumps(json_response).encode("utf-8")
+            future = publisher_client.publish(topic_name, data)
+
+            # print(json.dumps(json_response, indent=4, sort_keys=True))
+
+
+def main():
+    publisher_client = init_GCP()
+    delete_rules()
+    rules = set_rules()
+    get_tweets(rules, publisher_client)
 
 
 if __name__ == "__main__":
-    config_app()
-    delete_rules()
-    set_rules = set_rules()
-    get_tweets(set_rules)
+    main()

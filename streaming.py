@@ -5,14 +5,19 @@ import configparser
 
 PROPERTIES_PATH = "config.properties"
 
+#
 # Specify the real values in config.properties file
+#
 API_consumer_key = "THE CONSUMER KEY"
 API_consumer_secret = "THE CONSUMER SECRET"
 access_token_key = "THE ACCESS TOKEN KEY"
 access_token_secret = "THE ACCESS TOKEN SECRET"
 bearer_token = "THE BEARER TOKEN"
 
-
+#
+# Initial configuration to obtain the tweets stream access. Get the real values
+# from config.properties file.
+#
 def config_app():
     config = configparser.RawConfigParser()
     config.read(PROPERTIES_PATH)
@@ -128,5 +133,5 @@ def get_tweets(set):
 if __name__ == "__main__":
     config_app()
     delete_rules()
-    set = set_rules()
-    get_tweets(set)
+    set_rules = set_rules()
+    get_tweets(set_rules)

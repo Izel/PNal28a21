@@ -57,3 +57,27 @@ To install google cloud sdk
 
 pip install google-cloud
 ```
+
+# How to run
+
+1. Init your cloud SDK
+
+``` 
+
+./google-cloud-sdk/bin/gcloud init  
+```
+
+2. Set the path to your service account key file
+
+``` 
+
+export GOOGLE_APPLICATION_CREDENTIALS="<PATH_TO_SERVICE_ACCOUNT_JSON_KEY_FILE>"
+```
+
+3. Set enviromental variables.
+
+``` 
+export BEARER_TOKEN=<YOUR_TOKEN> 
+```
+
+4. Execute `python streaming.py`

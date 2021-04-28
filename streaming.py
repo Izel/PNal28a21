@@ -53,8 +53,9 @@ def set_rules():
     header = get_header()
     rules = [
         {"value": "#ParoNacional #28Abril", "tag": "Paro Nal 28 Abril"},
-        {"value": "#ParoNacional28A #28Abril", "tag": "Paro Nal 28 Abril"},
+        {"value": "#ParoNacional28A", "tag": "Paro Nal 28 Abril"},
         {"value": "#ReformaTributaria", "tag": "Reforma tributaria"},
+        {"value": "#NoALaReformaTributaria", "tag": "Reforma tributaria"},
         {"value": "#NoALaReforma", "tag": "Reforma tributaria"},
         {
             "value": "#ParoNacional 28 abril (vandalos OR vandalismo)",
@@ -70,6 +71,10 @@ def set_rules():
             "tag": "Paro Nal Carrasquilla Duque",
         },
         {"value": "#ParoNacional #AbusoPolicial", "tag": "Paro Nal Abuso Policial"},
+        {
+            "value": "(#ESMAD OR ESMAD) (gases OR disparos OR dispara OR disparan OR golpes OR golpea OR ilegal OR ilegalmente)",
+            "tag": "Abuso policial",
+        },
         {"value": "#ParoNacional Colombia", "tag": "Paro Nal Colombia"},
     ]
     payload = {"add": rules}
@@ -145,8 +150,6 @@ def get_tweets(set, publisher_client):
             json_response = json.loads(response_line)
             data = json.dumps(json_response).encode("utf-8")
             future = publisher_client.publish(topic_name, data)
-
-            # print(json.dumps(json_response, indent=4, sort_keys=True))
 
 
 def main():

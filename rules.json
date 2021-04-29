@@ -1,0 +1,48 @@
+{
+    "rules": [
+        {
+            "value": "#ParoNacional #28Abril",
+            "tag": "Paro Nacional"
+        },
+        {
+            "value": "#ParoNacional28A",
+            "tag": "Paro Nacional"
+        },
+        {
+            "value": "#ReformaTributaria",
+            "tag": "Reforma tributaria"
+        },
+        {
+            "value": "#NoALaReformaTributaria",
+            "tag": "Reforma tributaria"
+        },
+        {
+            "value": "#NoALaReforma",
+            "tag": "Reforma tributaria"
+        },
+        {
+            "value": "#ParoNacional 28 abril (vandalos OR vandalismo)",
+            "tag": "Vandalismo"
+        },
+        {
+            "value": "#ParoNacional 28 abril",
+            "tag": "Paro Nacional"
+        },
+        {
+            "value": "#ParoNacional reforma tributaria",
+            "tag": "Reforma tributaria"
+        },
+        {
+            "value": "#ParoNacional (Carrasquilla OR Duque)",
+            "tag": "Carrasquilla/Duque"
+        },
+        {
+            "value": "#ParoNacional #AbusoPolicial",
+            "tag": "Abuso Policial"
+        },
+        {
+            "value": "(#ESMAD OR ESMAD OR tombo OR tombos OR policia OR policias) (gases OR disparos OR dispara OR disparan OR dispararon OR golpes OR golpea OR golpearon OR ilegal OR ilegalmente OR (arma de fuego))",
+            "tag": "Abuso Policial"
+        }
+    ]
+}

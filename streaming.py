@@ -1,6 +1,6 @@
 import requests
 import os
-import time
+from time import gmtime, strftime
 import json
 import configparser
 
@@ -51,46 +51,29 @@ def get_header():
 #
 def set_rules():
     header = get_header()
-    rules = [
-        {"value": "#ParoNacional #28Abril", "tag": "Paro Nal 28 Abril"},
-        {"value": "#ParoNacional28A", "tag": "Paro Nal 28 Abril"},
-        {"value": "#ReformaTributaria", "tag": "Reforma tributaria"},
-        {"value": "#NoALaReformaTributaria", "tag": "Reforma tributaria"},
-        {"value": "#NoALaReforma", "tag": "Reforma tributaria"},
-        {
-            "value": "#ParoNacional 28 abril (vandalos OR vandalismo)",
-            "tag": "Paro Nal 21 Abril vandalismo",
-        },
-        {"value": "#ParoNacional 28 abril", "tag": "Paro Nal 28 Abril"},
-        {
-            "value": "#ParoNacional reforma tributaria",
-            "tag": "Paro Nal reforma tributaria",
-        },
-        {
-            "value": "#ParoNacional (Carrasquilla OR Duque)",
-            "tag": "Paro Nal Carrasquilla Duque",
-        },
-        {"value": "#ParoNacional #AbusoPolicial", "tag": "Paro Nal Abuso Policial"},
-        {
-            "value": "(#ESMAD OR ESMAD) (gases OR disparos OR dispara OR disparan OR golpes OR golpea OR ilegal OR ilegalmente)",
-            "tag": "Abuso policial",
-        },
-        {"value": "#ParoNacional Colombia", "tag": "Paro Nal Colombia"},
-    ]
-    payload = {"add": rules}
-    response = requests.post(
-        "https://api.twitter.com/2/tweets/search/stream/rules",
-        headers=header,
-        json=payload,
-    )
+    with open("rules.json") as f:
+        rules = json.load(f)
+        payload = {"add": rules["rules"]}
 
-    if response.status_code != 201:
-        raise Exception(
-            "Cannot add rules (HTTP {}): {}".format(response.status_code, response.text)
+        response = requests.post(
+            "https://api.twitter.com/2/tweets/search/stream/rules",
+            headers=header,
+            json=payload,
         )
-    print("### Rules setting result")
-    print(json.dumps(response.json()))
-    print("###")
+
+        if response.status_code != 201:
+            raise Exception(
+                "Cannot add rules (HTTP {}): {}".format(
+                    response.status_code, response.text
+                )
+            )
+
+        print("### Rules setting result")
+        print(json.dumps(response.json()))
+        print("###")
+        return
+
+    raise Exception("Not possible open fine rules.json")
 
 
 #
@@ -148,8 +131,10 @@ def get_tweets(set, publisher_client):
     for response_line in response.iter_lines():
         if response_line:
             json_response = json.loads(response_line)
+            json_response["data"]["datetime"] = strftime("%Y-%m-%d %H:%M:%S", gmtime())
             data = json.dumps(json_response).encode("utf-8")
-            future = publisher_client.publish(topic_name, data)
+            # future = publisher_client.publish(topic_name, data)
+            print(data)
 
 
 def main():

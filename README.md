@@ -1,6 +1,6 @@
-# Twitter Analysis using GCP
+# Twitter streaming Analysis using GCP
 
-Topics analysis at twitter 
+Aplying anaysis to streamming data incomming from twitter 
 
 # Tools
 

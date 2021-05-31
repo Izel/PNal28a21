@@ -133,8 +133,7 @@ def get_tweets(set, publisher_client):
             json_response = json.loads(response_line)
             json_response["data"]["datetime"] = strftime("%Y-%m-%d %H:%M:%S", gmtime())
             data = json.dumps(json_response).encode("utf-8")
-            # future = publisher_client.publish(topic_name, data)
-            print(data)
+            future = publisher_client.publish(topic_name, data)
 
 
 def main():

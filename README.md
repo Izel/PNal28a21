@@ -1,6 +1,6 @@
-# PNal28A21
+# Twitter Analysis using GCP
 
-Topics analysis by protesters tweets about the tax reform law in April 28th 2021. The analysis has started previous to the protest event and pretends continue the analysis for a couple of weeks after the protest.
+Topics analysis at twitter 
 
 # Tools
 
